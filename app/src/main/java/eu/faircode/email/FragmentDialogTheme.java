@@ -66,7 +66,7 @@ public class FragmentDialogTheme extends FragmentDialogBase {
         boolean grey = (checkedId == R.id.rbThemeGrey);
         boolean solarized = (checkedId == R.id.rbThemeSolarized);
         boolean blank = (checkedId == R.id.rbThemeBlank);
-        boolean bw = (checkedId == R.id.rbThemeBlackOrWhite);
+        boolean bw = (checkedId == R.id.rbThemeBlackOrWhite || blank);
         boolean mono = (checkedId == R.id.rbThemeYouMono);
         boolean you = (checkedId == R.id.rbThemeYou || mono);
         boolean colored = (grey || bw || solarized || you ||
@@ -233,6 +233,10 @@ public class FragmentDialogTheme extends FragmentDialogBase {
                 break;
 
             case "blank":
+            case "black_and_white":
+            case "blank_light":
+            case "blank_dark":
+            case "blank_system":
                 rgTheme.check(R.id.rbThemeBlank);
                 break;
 
@@ -240,9 +244,6 @@ public class FragmentDialogTheme extends FragmentDialogBase {
             case "white":
             case "bw_system":
                 rgTheme.check(R.id.rbThemeBlackOrWhite);
-                break;
-            case "black_and_white":
-                rgTheme.check(R.id.rbThemeBlackAndWhite);
                 break;
 
             case "you_light":
@@ -351,15 +352,17 @@ public class FragmentDialogTheme extends FragmentDialogBase {
                             else
                                 editor.putString("theme",
                                         "solarized" + (dark ? "_dark" : "_light")).apply();
-                        } else if (checkedRadioButtonId == R.id.rbThemeBlank)
-                            editor.putString("theme", "blank").apply();
-                        else if (checkedRadioButtonId == R.id.rbThemeBlackOrWhite) {
+                        } else if (checkedRadioButtonId == R.id.rbThemeBlank) {
+                            if (system)
+                                editor.putString("theme", "blank_system").apply();
+                            else
+                                editor.putString("theme",
+                                        "blank" + (dark ? "_dark" : "_light")).apply();
+                        } else if (checkedRadioButtonId == R.id.rbThemeBlackOrWhite) {
                             if (system)
                                 editor.putString("theme", "bw_system").apply();
                             else
                                 editor.putString("theme", (dark ? "black" : "white")).apply();
-                        } else if (checkedRadioButtonId == R.id.rbThemeBlackAndWhite) {
-                            editor.putString("theme", "black_and_white").apply();
                         } else if (checkedRadioButtonId == R.id.rbThemeYou) {
                             if (system)
                                 editor.putString("theme",
@@ -505,9 +508,15 @@ public class FragmentDialogTheme extends FragmentDialogBase {
                 else
                     return R.style.AppThemeSolarizedDark;
 
-                // Black
-            case "blank":
+                // Blank
+            case "blank_light":
                 return R.style.AppThemeBlank;
+            case "blank":
+            case "blank_dark":
+                if (light)
+                    return R.style.AppThemeBlank;
+                else
+                    return R.style.AppThemeBlackAndWhite;
 
             case "black":
                 if (light)
@@ -520,12 +529,6 @@ public class FragmentDialogTheme extends FragmentDialogBase {
                     return R.style.AppThemeGreySteelBlueLight;
                 else
                     return R.style.AppThemeWhite;
-
-            case "black_and_white":
-                if (light)
-                    return R.style.AppThemeGreySteelBlueLight;
-                else
-                    return R.style.AppThemeBlackAndWhite;
 
                 // System
             case "system":
@@ -571,6 +574,9 @@ public class FragmentDialogTheme extends FragmentDialogBase {
             case "solarized_system":
                 return (night
                         ? R.style.AppThemeSolarizedDark : R.style.AppThemeSolarizedLight);
+            case "blank_system":
+                return (night
+                        ? R.style.AppThemeBlackAndWhite : R.style.AppThemeBlank);
             case "bw_system":
                 return (night
                         ? R.style.AppThemeBlack : R.style.AppThemeWhite);
